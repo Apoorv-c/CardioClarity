@@ -1,0 +1,240 @@
+{
+  "drtest": {
+    "name": "Dr. Test User",
+    "password": "ecd71870d1963316a97e3ac3408c9835ad8cf0f3c1bc703527c30265534f75ae",
+    "created_at": "2026-04-14T02:47:28.580344",
+    "history": [
+      {
+        "id": "fd15f719",
+        "timestamp": "2026-04-14T02:58:04.279553",
+        "mode": "doctor",
+        "age": 60,
+        "sex": "Male",
+        "trestbps": 150,
+        "chol": 280,
+        "thalach": 140,
+        "probability": 0.7896,
+        "tier_key": "high",
+        "tier_label": "High Risk"
+      },
+      {
+        "id": "fe71b57c",
+        "timestamp": "2026-04-14T03:03:37.297113",
+        "mode": "patient",
+        "age": 45,
+        "sex": "Male",
+        "trestbps": 120,
+        "chol": 200,
+        "thalach": 140,
+        "probability": null,
+        "tier_key": "medium",
+        "tier_label": "Medium Risk"
+      },
+      {
+        "id": "1cd119da",
+        "timestamp": "2026-04-14T03:03:55.075526",
+        "mode": "doctor",
+        "age": 60,
+        "sex": "Male",
+        "trestbps": 150,
+        "chol": 280,
+        "thalach": 140,
+        "probability": 0.9779,
+        "tier_key": "high",
+        "tier_label": "High Risk"
+      },
+      {
+        "id": "131d4ced",
+        "timestamp": "2026-04-14T03:26:44.581802",
+        "mode": "patient",
+        "age": 45,
+        "sex": "Male",
+        "trestbps": 120,
+        "chol": 200,
+        "thalach": 140,
+        "probability": null,
+        "tier_key": "medium",
+        "tier_label": "Medium Risk"
+      }
+    ],
+    "_tokens": [
+      "2a992afa3de35c2e27d5baf8e5c1b990503aa1e64df8d57d0fb2808570e3ebd7"
+    ]
+  },
+  "test@123": {
+    "name": "Apv",
+    "password": "a69ebb745bf040ed7544afbe02a194fb9914ca8cec2ced2013d659bf9ca25f07",
+    "created_at": "2026-04-14T03:29:58.299307",
+    "history": [
+      {
+        "id": "69a16652",
+        "timestamp": "2026-04-14T03:31:14.655154",
+        "mode": "doctor",
+        "age": 55,
+        "sex": "Male",
+        "trestbps": 120,
+        "chol": 200,
+        "thalach": 150,
+        "probability": 0.1784,
+        "tier_key": "low",
+        "tier_label": "Low Risk"
+      },
+      {
+        "id": "1d0f2718",
+        "timestamp": "2026-04-14T03:31:29.327552",
+        "mode": "doctor",
+        "age": 55,
+        "sex": "Male",
+        "trestbps": 120,
+        "chol": 299,
+        "thalach": 150,
+        "probability": 0.2938,
+        "tier_key": "low",
+        "tier_label": "Low Risk"
+      },
+      {
+        "id": "fd9372c2",
+        "timestamp": "2026-04-14T03:31:38.939388",
+        "mode": "doctor",
+        "age": 55,
+        "sex": "Male",
+        "trestbps": 120,
+        "chol": 299,
+        "thalach": 160,
+        "probability": 0.1765,
+        "tier_key": "low",
+        "tier_label": "Low Risk"
+      },
+      {
+        "id": "f3f7bb20",
+        "timestamp": "2026-04-14T03:40:21.415734",
+        "mode": "doctor",
+        "age": 55,
+        "sex": "Male",
+        "trestbps": 120,
+        "chol": 200,
+        "thalach": 150,
+        "probability": 0.1784,
+        "tier_key": "low",
+        "tier_label": "Low Risk"
+      },
+      {
+        "id": "af3935e2",
+        "timestamp": "2026-04-14T03:44:22.550156",
+        "mode": "doctor",
+        "age": 55,
+        "sex": "Male",
+        "trestbps": 120,
+        "chol": 200,
+        "thalach": 150,
+        "probability": 0.1784,
+        "tier_key": "low",
+        "tier_label": "Low Risk"
+      }
+    ],
+    "_tokens": [
+      "040722d09288e2904f2df27c7e76c1baa5a9bf82246b693877a4419a802e1090"
+    ]
+  },
+  "test@1234": {
+    "name": "XYZ",
+    "password": "c758c9c82bf1d29fbf19ad84a08e4334bd0ca0b431661b72c12cb6a22bfdf4cf",
+    "created_at": "2026-04-14T13:08:46.333399",
+    "history": [
+      {
+        "id": "20b3df48",
+        "timestamp": "2026-04-14T13:49:41.840662",
+        "mode": "doctor",
+        "age": 55,
+        "sex": "Male",
+        "trestbps": 120,
+        "chol": 200,
+        "thalach": 150,
+        "probability": 0.1784,
+        "tier_key": "low",
+        "tier_label": "Low Risk"
+      },
+      {
+        "id": "fb894f38",
+        "timestamp": "2026-04-14T13:57:39.254466",
+        "mode": "doctor",
+        "age": 55,
+        "sex": "Male",
+        "trestbps": 120,
+        "chol": 200,
+        "thalach": 150,
+        "probability": 0.1784,
+        "tier_key": "low",
+        "tier_label": "Low Risk"
+      },
+      {
+        "id": "923dcdff",
+        "timestamp": "2026-04-14T16:08:52.831253",
+        "mode": "doctor",
+        "age": 70,
+        "sex": "Male",
+        "trestbps": 160,
+        "chol": 250,
+        "thalach": 100,
+        "probability": 0.6215,
+        "tier_key": "medium",
+        "tier_label": "Medium Risk"
+      },
+      {
+        "id": "2aa79d38",
+        "timestamp": "2026-04-14T16:16:54.905221",
+        "mode": "patient",
+        "age": 45,
+        "sex": "Male",
+        "trestbps": 120,
+        "chol": 200,
+        "thalach": 140,
+        "probability": null,
+        "tier_key": "medium",
+        "tier_label": "Medium Risk"
+      },
+      {
+        "id": "d2d81e82",
+        "timestamp": "2026-04-17T08:52:09.486097",
+        "mode": "doctor",
+        "age": 55,
+        "sex": "Male",
+        "trestbps": 120,
+        "chol": 200,
+        "thalach": 150,
+        "probability": 0.1784,
+        "tier_key": "low",
+        "tier_label": "Low Risk"
+      },
+      {
+        "id": "7af03c4a",
+        "timestamp": "2026-04-17T09:15:26.040600",
+        "mode": "doctor",
+        "age": 55,
+        "sex": "Male",
+        "trestbps": 120,
+        "chol": 200,
+        "thalach": 150,
+        "probability": 0.1784,
+        "tier_key": "low",
+        "tier_label": "Low Risk"
+      },
+      {
+        "id": "f4887217",
+        "timestamp": "2026-04-17T09:17:27.776587",
+        "mode": "patient",
+        "age": 45,
+        "sex": "Male",
+        "trestbps": 120,
+        "chol": 200,
+        "thalach": 140,
+        "probability": null,
+        "tier_key": "low",
+        "tier_label": "Low Risk"
+      }
+    ],
+    "_tokens": [
+      "b05e20d3b6ddf7bb1d03bf3efe9e71cad9bb77cbb2dc1a1c4eab0c7f9d6f8d3d"
+    ]
+  }
+}

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CardioClarity — Heart Disease Risk Assessment</title>
+  <meta name="description" content="AI-powered explainable heart disease risk prediction. Get your cardiovascular risk score with clinical-grade analysis." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/chatbot.css" />
+  <link rel="stylesheet" href="/css/particles.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+     AUTH SCREEN
+════════════════════════════════════════════════════════════════ -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+        <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z" fill="#e63946"/>
+      </svg>
+    </div>
+    <h1 class="auth-title">CardioClarity</h1>
+    <p class="auth-subtitle">AI-Powered Heart Disease Risk Assessment</p>
+
+    <!-- Tab switcher -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="authSwitchTab('login')">Sign In</button>
+      <button class="auth-tab" id="tab-register" onclick="authSwitchTab('register')">Register</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="login-username">Username</label>
+        <input type="text" id="login-username" placeholder="Enter your username" required autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="login-password" placeholder="Enter your password" required autocomplete="current-password" />
+          <button type="button" class="pw-toggle" onclick="togglePw('login-password')">👁</button>
+        </div>
+      </div>
+      <div id="login-error" class="form-error hidden"></div>
+      <button type="submit" class="btn-primary btn-full" id="login-btn">
+        <span class="btn-text">Sign In</span>
+        <span class="btn-loader hidden">⏳</span>
+      </button>
+    </form>
+
+    <!-- Register Form -->
+    <form id="register-form" class="auth-form hidden" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label for="reg-name">Full Name</label>
+        <input type="text" id="reg-name" placeholder="Dr. Jane Smith" required />
+      </div>
+      <div class="form-group">
+        <label for="reg-username">Username</label>
+        <input type="text" id="reg-username" placeholder="Choose a username" required autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label for="reg-password">Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="reg-password" placeholder="Min 6 characters" required autocomplete="new-password" />
+          <button type="button" class="pw-toggle" onclick="togglePw('reg-password')">👁</button>
+        </div>
+      </div>
+      <div id="register-error" class="form-error hidden"></div>
+      <button type="submit" class="btn-primary btn-full" id="register-btn">
+        <span class="btn-text">Create Account</span>
+        <span class="btn-loader hidden">⏳</span>
+      </button>
+    </form>
+
+    <p class="auth-disclaimer">🔒 Your data is stored locally on this server only.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     DASHBOARD
+════════════════════════════════════════════════════════════════ -->
+<div id="dashboard" class="hidden">
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <div class="nav-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z" fill="#e63946"/>
+        </svg>
+        <span>CardioClarity</span>
+      </div>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-tab="predict" onclick="switchTab('predict')">🔍 Predict</button>
+      <button class="nav-tab" data-tab="whatif" onclick="switchTab('whatif')">🔬 What-If</button>
+      <button class="nav-tab" data-tab="history" onclick="switchTab('history')">📋 History</button>
+      <button class="nav-tab" data-tab="insights" onclick="switchTab('insights')">📊 Insights</button>
+    </div>
+    <div class="nav-right">
+      <div class="role-switcher">
+        <button class="role-btn active" id="role-doctor" onclick="setRole('doctor')">🧑‍⚕️ Doctor</button>
+        <button class="role-btn" id="role-patient" onclick="setRole('patient')">👤 Patient</button>
+      </div>
+      <div class="nav-user" onclick="toggleUserMenu()">
+        <div class="avatar" id="nav-avatar">U</div>
+        <span id="nav-username">User</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+      </div>
+      <div class="user-menu hidden" id="user-menu">
+        <button onclick="handleLogout()">🚪 Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Banner -->
+  <div class="hero-banner">
+    <div class="hero-content">
+      <h1 class="hero-title">Heart Disease Risk Assessment</h1>
+      <p class="hero-subtitle" id="hero-subtitle">Powered by AI · Explainable · Clinical-Grade</p>
+    </div>
+    <div class="hero-pulse">
+      <svg viewBox="0 0 200 60" class="ecg-line">
+        <polyline points="0,30 30,30 40,30 45,5 50,55 55,30 70,30 80,30 85,15 90,45 95,30 110,30 130,30 135,5 140,55 145,30 160,30 200,30" 
+                  fill="none" stroke="#e63946" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── TAB: PREDICT ─────────────────────────────────────────────── -->
+  <div class="tab-content active" id="tab-predict">
+    <div class="container">
+
+      <!-- Role Info Banner -->
+      <div class="role-banner" id="role-banner-doctor">
+        <span>🧑‍⚕️ <strong>Doctor Mode</strong> — Full clinical form with SHAP explainability and all 25 features.</span>
+      </div>
+      <div class="role-banner role-banner-patient hidden" id="role-banner-patient">
+        <span>👤 <strong>Patient Screening Mode</strong> — 8 plain-language questions. No exact percentage shown. Conservative thresholds.</span>
+      </div>
+
+      <!-- DOCTOR FORM -->
+      <div id="doctor-form-section">
+        <div class="section-header">
+          <h2>📋 Clinical Information</h2>
+        </div>
+        <form id="doctor-form" onsubmit="handleDoctorPredict(event)">
+          <div class="form-grid-3">
+            <div class="form-card">
+              <h3 class="form-card-title">Demographics</h3>
+              <div class="form-group">
+                <label for="doc-age">Age (years)</label>
+                <input type="number" id="doc-age" min="20" max="100" value="55" required />
+              </div>
+              <div class="form-group">
+                <label for="doc-sex">Biological Sex</label>
+                <select id="doc-sex">
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="doc-cp">Chest Pain Type</label>
+                <select id="doc-cp">
+                  <option value="typical angina">Typical Angina</option>
+                  <option value="atypical angina">Atypical Angina</option>
+                  <option value="non-anginal">Non-Anginal Pain</option>
+                  <option value="asymptomatic">Asymptomatic</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="doc-trestbps">Resting BP (mm Hg)</label>
+                <input type="number" id="doc-trestbps" min="80" max="200" value="120" required />
+                <span class="input-hint">Normal: 90–120</span>
+              </div>
+            </div>
+            <div class="form-card">
+              <h3 class="form-card-title">Lab Values</h3>
+              <div class="form-group">
+                <label for="doc-chol">Cholesterol (mg/dl)</label>
+                <input type="number" id="doc-chol" min="100" max="600" value="200" required />
+                <span class="input-hint">Desirable: &lt;200</span>
+              </div>
+              <div class="form-group">
+                <label for="doc-fbs">Fasting Blood Sugar &gt;120</label>
+                <select id="doc-fbs">
+                  <option value="False">False</option>
+                  <option value="True">True</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="doc-restecg">Resting ECG Results</label>
+                <select id="doc-restecg">
+                  <option value="normal">Normal</option>
+                  <option value="st-t abnormality">ST-T Abnormality</option>
+                  <option value="lv hypertrophy">LV Hypertrophy</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="doc-thalach">Max Heart Rate (bpm)</label>
+                <input type="number" id="doc-thalach" min="60" max="220" value="150" required />
+              </div>
+            </div>
+            <div class="form-card">
+              <h3 class="form-card-title">Stress Test & Vessels</h3>
+              <div class="form-group">
+                <label for="doc-exang">Exercise Induced Angina</label>
+                <select id="doc-exang">
+                  <option value="False">No</option>
+                  <option value="True">Yes</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="doc-oldpeak">ST Depression (oldpeak)</label>
+                <input type="number" id="doc-oldpeak" min="0" max="6" step="0.1" value="1.0" required />
+              </div>
+              <div class="form-group">
+                <label for="doc-slope">ST Segment Slope</label>
+                <select id="doc-slope">
+                  <option value="upsloping">Upsloping</option>
+                  <option value="flat">Flat</option>
+                  <option value="downsloping">Downsloping</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="doc-ca">Major Vessels (0–3)</label>
+                <input type="range" id="doc-ca" min="0" max="3" value="0" class="slider"
+                       oninput="document.getElementById('doc-ca-val').textContent=this.value" />
+                <span class="slider-val" id="doc-ca-val">0</span>
+              </div>
+              <div class="form-group">
+                <label for="doc-thal">Thalassemia</label>
+                <select id="doc-thal">
+                  <option value="normal">Normal</option>
+                  <option value="fixed defect">Fixed Defect</option>
+                  <option value="reversable defect">Reversible Defect</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Warning area -->
+          <div id="input-warnings" class="warnings-area hidden"></div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary btn-large" id="doc-predict-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              Assess Risk
+            </button>
+            <button type="button" class="btn-secondary" onclick="clearResults()">Clear</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- PATIENT FORM -->
+      <div id="patient-form-section" class="hidden">
+        <div class="disclaimer-banner">
+          <strong>📋 Before you start</strong><br>
+          You will answer <strong>8 plain-language questions</strong>. The app will only show a
+          <strong>Lower / Moderate / Higher</strong> concern band — no exact percentage.
+          Seven clinical details (ECG, ST measures, vessel imaging, etc.) are filled with
+          population medians. <strong>This is not a diagnosis.</strong>
+        </div>
+        <div class="section-header" style="margin-top:1.5rem">
+          <h2>🫀 Heart Health Screening</h2>
+        </div>
+        <form id="patient-form" onsubmit="handlePatientPredict(event)">
+          <div class="form-grid-2">
+            <div class="form-card">
+              <div class="form-group">
+                <label for="pat-age">1️⃣ How old are you?</label>
+                <input type="number" id="pat-age" min="20" max="100" value="45" required />
+              </div>
+              <div class="form-group">
+                <label>2️⃣ Biological sex?</label>
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="pat-sex" value="Male" checked /> Male</label>
+                  <label class="radio-label"><input type="radio" name="pat-sex" value="Female" /> Female</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="pat-chest">3️⃣ Chest discomfort?</label>
+                <select id="pat-chest">
+                  <option value="asymptomatic">No chest discomfort</option>
+                  <option value="typical angina">Pressure / tightness during activity</option>
+                  <option value="atypical angina">Occasional — not always during activity</option>
+                  <option value="non-anginal">Sharp or stabbing chest pain</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>4️⃣ Chest pain during exercise?</label>
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="pat-exang" value="No" checked /> No</label>
+                  <label class="radio-label"><input type="radio" name="pat-exang" value="Yes" /> Yes</label>
+                </div>
+              </div>
+            </div>
+            <div class="form-card">
+              <div class="form-group">
+                <label>5️⃣ Do you know your resting blood pressure?</label>
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="pat-bp-known" value="yes" checked onchange="toggleBPInput(this)" /> Yes, I know it</label>
+                  <label class="radio-label"><input type="radio" name="pat-bp-known" value="no" onchange="toggleBPInput(this)" /> I don't know</label>
+                </div>
+                <div id="pat-bp-input">
+                  <input type="number" id="pat-trestbps" min="80" max="200" value="120" />
+                </div>
+                <div id="pat-bp-median" class="median-note hidden">📌 Using population median (130 mm Hg)</div>
+              </div>
+              <div class="form-group">
+                <label>6️⃣ Do you know your cholesterol level?</label>
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="pat-chol-known" value="yes" checked onchange="toggleCholInput(this)" /> Yes, I know it</label>
+                  <label class="radio-label"><input type="radio" name="pat-chol-known" value="no" onchange="toggleCholInput(this)" /> I don't know</label>
+                </div>
+                <div id="pat-chol-input">
+                  <input type="number" id="pat-chol" min="100" max="600" value="200" />
+                </div>
+                <div id="pat-chol-median" class="median-note hidden">📌 Using population median (220 mg/dl)</div>
+              </div>
+              <div class="form-group">
+                <label>7️⃣ Diabetes or high blood sugar?</label>
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="pat-fbs" value="No" checked /> No</label>
+                  <label class="radio-label"><input type="radio" name="pat-fbs" value="Yes" /> Yes</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="pat-thalach">8️⃣ Highest heart rate during exercise (bpm)</label>
+                <input type="number" id="pat-thalach" min="60" max="220" value="140" />
+                <span class="input-hint">Leave as-is if unsure — estimated from your age</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary btn-large" id="pat-predict-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              Check My Heart Health
+            </button>
+            <button type="button" class="btn-secondary" onclick="clearResults()">Clear</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- RESULTS SECTION -->
+      <div id="results-section" class="hidden">
+        <div class="results-divider">
+          <span>Assessment Results</span>
+        </div>
+
+        <!-- Metric Cards Row -->
+        <div class="cards-row" id="metric-cards">
+          <div class="metric-card" id="card-bp">
+            <div class="metric-icon">💓</div>
+            <div class="metric-label">Resting BP</div>
+            <div class="metric-value" id="card-bp-val">— mm Hg</div>
+            <div class="metric-badge" id="card-bp-badge"></div>
+          </div>
+          <div class="metric-card" id="card-chol">
+            <div class="metric-icon">🩸</div>
+            <div class="metric-label">Cholesterol</div>
+            <div class="metric-value" id="card-chol-val">— mg/dl</div>
+            <div class="metric-badge" id="card-chol-badge"></div>
+          </div>
+          <div class="metric-card" id="card-hr">
+            <div class="metric-icon">⚡</div>
+            <div class="metric-label">Max Heart Rate</div>
+            <div class="metric-value" id="card-hr-val">— bpm</div>
+            <div class="metric-badge" id="card-hr-badge"></div>
+          </div>
+          <div class="metric-card" id="card-cvrisk">
+            <div class="metric-icon">📊</div>
+            <div class="metric-label">CV Risk Score</div>
+            <div class="metric-value" id="card-cvrisk-val">—</div>
+            <div class="metric-badge" id="card-cvrisk-badge"></div>
+          </div>
+        </div>
+
+        <!-- Main Result: Gauge + Risk Label -->
+        <div class="result-main-grid">
+          <!-- Risk Gauge (SVG) -->
+          <div class="gauge-card">
+            <h3>Risk Meter</h3>
+            <div class="gauge-container">
+              <svg id="risk-gauge-svg" viewBox="0 0 300 170" class="gauge-svg">
+                <!-- Background arc segments -->
+                <path d="M 30 150 A 120 120 0 0 1 90 30" fill="none" stroke="#22c55e" stroke-width="22" stroke-linecap="round" opacity="0.25"/>
+                <path d="M 90 30 A 120 120 0 0 1 210 30" fill="none" stroke="#f59e0b" stroke-width="22" stroke-linecap="round" opacity="0.25"/>
+                <path d="M 210 30 A 120 120 0 0 1 270 150" fill="none" stroke="#ef4444" stroke-width="22" stroke-linecap="round" opacity="0.25"/>
+                <!-- Active arc -->
+                <path id="gauge-arc" d="" fill="none" stroke="#22c55e" stroke-width="22" stroke-linecap="round"/>
+                <!-- Needle -->
+                <line id="gauge-needle" x1="150" y1="150" x2="150" y2="40"
+                      stroke="#1d3557" stroke-width="3" stroke-linecap="round"
+                      transform="rotate(-90, 150, 150)"/>
+                <circle cx="150" cy="150" r="8" fill="#1d3557"/>
+                <!-- Labels -->
+                <text x="22" y="165" font-size="11" fill="#6b7280">0%</text>
+                <text x="138" y="18" font-size="11" fill="#6b7280">50%</text>
+                <text x="270" y="165" font-size="11" fill="#6b7280">100%</text>
+                <text x="60" y="82" font-size="10" fill="#22c55e">Low</text>
+                <text x="133" y="40" font-size="10" fill="#f59e0b">Med</text>
+                <text x="210" y="82" font-size="10" fill="#ef4444">High</text>
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-percent" id="gauge-percent-text">—</div>
+                <div class="gauge-label" id="gauge-risk-label">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk Details -->
+          <div class="result-detail-card">
+            <div class="risk-result-header" id="risk-result-header">
+              <div class="risk-badge-large" id="risk-badge-large">—</div>
+              <p id="result-binary-label" class="result-binary"></p>
+            </div>
+            <div class="result-advice" id="result-advice"></div>
+            <div class="result-recommendations" id="result-recommendations"></div>
+            <div class="result-actions">
+              <button class="btn-primary" onclick="downloadPDF()" id="pdf-btn">
+                📄 Download PDF Report
+              </button>
+              <button class="btn-secondary" onclick="switchTab('whatif')" id="whatif-nav-btn">
+                🔬 Explore What-If
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warnings -->
+        <div id="result-warnings" class="result-warnings hidden"></div>
+
+        <!-- SHAP Chart (Doctor only) -->
+        <div id="shap-section" class="chart-card">
+          <h3>💡 Feature Contributions (SHAP Analysis)</h3>
+          <p class="chart-caption">Red = pushes risk up · Green = pushes risk down · BP & Cholesterol always shown</p>
+          <div class="shap-bar-container">
+            <canvas id="shap-chart" height="280"></canvas>
+          </div>
+        </div>
+
+        <!-- Patient bands (Patient only) -->
+        <div id="patient-bands" class="patient-bands hidden">
+          <div class="band-card" id="band-low">
+            <span class="band-icon">🟢</span>
+            <span class="band-label">Lower Risk</span>
+          </div>
+          <div class="band-card" id="band-medium">
+            <span class="band-icon">🟡</span>
+            <span class="band-label">Moderate Risk</span>
+          </div>
+          <div class="band-card" id="band-high">
+            <span class="band-icon">🔴</span>
+            <span class="band-label">Higher Risk</span>
+          </div>
+        </div>
+
+      </div><!-- /results-section -->
+    </div><!-- /container -->
+  </div><!-- /tab-predict -->
+
+  <!-- ── TAB: WHAT-IF ─────────────────────────────────────────────── -->
+  <div class="tab-content hidden" id="tab-whatif">
+    <div class="container">
+      <div class="section-header">
+        <h2>🔬 What-If Scenario Explorer</h2>
+        <p>Adjust BP and cholesterol to see how predicted risk responds.</p>
+      </div>
+      <div id="whatif-patient-notice" class="notice-banner hidden">
+        <strong>Doctor mode only.</strong> Switch to 🧑‍⚕️ Doctor in the nav to use this tool.
+      </div>
+      <div id="whatif-no-predict" class="notice-banner hidden">
+        <strong>Run a prediction first</strong> in the Predict tab, then return here.
+      </div>
+      <div id="whatif-controls" class="hidden">
+        <div class="whatif-grid">
+          <div class="whatif-slider-card">
+            <label for="wi-bp">What if Resting BP were… <span id="wi-bp-val" class="slider-display">120</span> mm Hg</label>
+            <input type="range" id="wi-bp" min="80" max="200" value="120" class="slider-full"
+                   oninput="document.getElementById('wi-bp-val').textContent=this.value; runWhatIf()" />
+            <div class="slider-range"><span>80</span><span>200</span></div>
+          </div>
+          <div class="whatif-slider-card">
+            <label for="wi-chol">What if Cholesterol were… <span id="wi-chol-val" class="slider-display">200</span> mg/dl</label>
+            <input type="range" id="wi-chol" min="100" max="600" value="200" class="slider-full"
+                   oninput="document.getElementById('wi-chol-val').textContent=this.value; runWhatIf()" />
+            <div class="slider-range"><span>100</span><span>600</span></div>
+          </div>
+        </div>
+        <div class="whatif-results" id="whatif-results">
+          <div class="whatif-metric">
+            <div class="whatif-metric-label">Baseline Risk</div>
+            <div class="whatif-metric-value" id="wi-base-prob">—</div>
+          </div>
+          <div class="whatif-arrow">→</div>
+          <div class="whatif-metric">
+            <div class="whatif-metric-label">What-If Risk</div>
+            <div class="whatif-metric-value" id="wi-new-prob">—</div>
+          </div>
+          <div class="whatif-metric">
+            <div class="whatif-metric-label">Change</div>
+            <div class="whatif-metric-value" id="wi-delta">—</div>
+          </div>
+          <div class="whatif-metric">
+            <div class="whatif-metric-label">Risk Band</div>
+            <div class="whatif-metric-value" id="wi-label">—</div>
+          </div>
+        </div>
+        <div class="whatif-message" id="whatif-message"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: HISTORY ──────────────────────────────────────────────── -->
+  <div class="tab-content hidden" id="tab-history">
+    <div class="container">
+      <div class="section-header">
+        <h2>📋 Your Prediction History</h2>
+        <p>Track your risk over time and compare past assessments.</p>
+      </div>
+
+      <!-- Progress Message -->
+      <div id="history-progress" class="progress-banner hidden"></div>
+
+      <!-- History Chart -->
+      <div class="chart-card" id="history-chart-card">
+        <h3>Risk Trend Over Time</h3>
+        <canvas id="history-chart" height="160"></canvas>
+      </div>
+
+      <!-- History Table -->
+      <div class="history-list" id="history-list">
+        <div class="empty-state">
+          <div class="empty-icon">📊</div>
+          <p>No predictions yet. Run your first assessment!</p>
+          <button class="btn-primary" onclick="switchTab('predict')">Start Assessment</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: INSIGHTS ─────────────────────────────────────────────── -->
+  <div class="tab-content hidden" id="tab-insights">
+    <div class="container">
+      <div class="section-header">
+        <h2>📊 Model Insights</h2>
+        <p>Global views of what the AI model learned across the training dataset.</p>
+      </div>
+
+      <!-- Metrics Cards -->
+      <div class="metrics-grid" id="metrics-grid">
+        <div class="loading-spinner">⏳ Loading metrics…</div>
+      </div>
+
+      <!-- Model Info -->
+      <div class="model-info-card">
+        <h3>🤖 Model Details</h3>
+        <div class="model-info-grid">
+          <div><strong>Model Type</strong><br>Random Forest Classifier</div>
+          <div><strong>Features</strong><br><span id="feature-count">25</span> clinical + engineered</div>
+          <div><strong>Scaler</strong><br>RobustScaler</div>
+          <div><strong>Class Imbalance</strong><br>class_weight='balanced'</div>
+        </div>
+      </div>
+
+      <!-- Insight Images -->
+      <div class="insights-grid">
+        <div class="insight-image-card">
+          <h3>🏆 Feature Importances</h3>
+          <img src="/api/model/images/feature_importance.png" alt="Feature Importance" class="insight-img" onerror="this.parentElement.style.display='none'" />
+        </div>
+        <div class="insight-image-card">
+          <h3>🔮 SHAP Summary Plot</h3>
+          <p class="chart-caption">Each dot = one test sample. Red = high feature value. Positive SHAP = increases risk.</p>
+          <img src="/api/model/images/shap_summary_plot.png" alt="SHAP Summary" class="insight-img" onerror="this.parentElement.style.display='none'" />
+        </div>
+        <div class="insight-image-card">
+          <h3>📈 ROC Curve</h3>
+          <img src="/api/model/images/roc_curve.png" alt="ROC Curve" class="insight-img" onerror="this.parentElement.style.display='none'" />
+        </div>
+        <div class="insight-image-card">
+          <h3>🔢 Confusion Matrix</h3>
+          <img src="/api/model/images/confusion_matrix.png" alt="Confusion Matrix" class="insight-img" onerror="this.parentElement.style.display='none'" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    ⚠️ CardioClarity is an AI-assisted screening tool. Always consult a qualified healthcare professional for medical decisions.
+  </footer>
+</div><!-- /dashboard -->
+
+<!-- Toast Notification -->
+<div id="toast" class="toast hidden"></div>
+
+<!-- Loading overlay -->
+<div id="loading-overlay" class="loading-overlay hidden">
+  <div class="loading-content">
+    <div class="heartbeat-loader">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z" fill="#e63946"/>
+      </svg>
+    </div>
+    <p id="loading-text">Analyzing your data…</p>
+  </div>
+</div>
+
+<script src="/js/particles.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/dashboard.js"></script>
+<script src="/js/history.js"></script>
+<script src="/js/pdf.js"></script>
+<script src="/js/chatbot.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   particles.css — Floating animated background elements
+══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Particle canvas overlay ─────────────────────────────────────────────── */
+#particle-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.55;
+}
+
+/* ── Auth screen gets its own animated backdrop ──────────────────────────── */
+.auth-screen {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── CSS floating orbs (behind everything) ───────────────────────────────── */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(60px);
+  animation: orbDrift linear infinite;
+  opacity: 0;
+}
+
+@keyframes orbDrift {
+  0%   { transform: translate(0, 0) scale(1);   opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(1.15); opacity: 0; }
+}
+
+/* ── Floating heart icons ────────────────────────────────────────────────── */
+.float-heart {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  font-size: 1rem;
+  animation: heartFloat linear infinite;
+  opacity: 0;
+  user-select: none;
+}
+
+@keyframes heartFloat {
+  0%   { transform: translateY(0) rotate(0deg) scale(1);   opacity: 0; }
+  8%   { opacity: 0.6; }
+  92%  { opacity: 0.35; }
+  100% { transform: translateY(-110vh) rotate(360deg) scale(0.6); opacity: 0; }
+}
+
+/* ── Pulse rings (behind hero) ────────────────────────────────────────────── */
+.pulse-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(230, 57, 70, 0.3);
+  animation: pulseExpand ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulseExpand {
+  0%   { transform: scale(0.6); opacity: 0.7; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* ── Hero banner particle canvas ─────────────────────────────────────────── */
+#hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+/* Make sure hero content sits above the canvas ───────────────────────────── */
+.hero-content, .hero-pulse {
+  position: relative;
+  z-index: 2;
+}
